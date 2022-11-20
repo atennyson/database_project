@@ -20,9 +20,11 @@ const (
 )
 
 func init() {
+
 	sqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
+
 	var err error
 	handler.DB, err = sql.Open("postgres", sqlInfo)
 	if err != nil {
