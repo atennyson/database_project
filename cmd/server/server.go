@@ -3,11 +3,12 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"github.com/atennyson/DBTest/cmd/handler"
-	"github.com/gorilla/mux"
-	_ "github.com/lib/pq"
 	"log"
 	"net/http"
+
+	"github.com/atennyson/DBTest/handler"
+	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
 )
 
 const (
@@ -15,7 +16,7 @@ const (
 	port     = 5432
 	user     = "postgres"
 	password = "sk8er4life"
-	dbname   = "Video_Games"
+	dbname   = "owned_switch_games"
 )
 
 func init() {
@@ -36,10 +37,15 @@ func init() {
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/games", handler.GetGames).Methods("GET")
+	r.HandleFunc("/games/sorted", handler.GetSortedGames).Methods("GET")
+	r.HandleFunc("/games/unplayed", handler.GetUnPlayedGames).Methods("GET")
+	r.HandleFunc("/games/started/unfinished", handler.GetStartedUnfinishedGames).Methods("GET")
+	r.HandleFunc("/games/finished", handler.GetFinishedGames).Methods("GET")
 	r.HandleFunc("/games/{title}", handler.GetSpecificGame).Methods("GET")
 	r.HandleFunc("/games/newgame", handler.PostGame).Methods("POST")
 	r.HandleFunc("/games/{title}", handler.PutGame).Methods("PUT")
 	r.HandleFunc("/games/{title}", handler.DeleteGame).Methods("DELETE")
+
 	fmt.Println("Listening on port 8080")
 	http.ListenAndServe(":8080", r)
 }
