@@ -12,7 +12,7 @@ import (
 
 var DB *sql.DB
 
-func GetGames(w http.ResponseWriter, r *http.Request) {
+func GetGamesHandler(w http.ResponseWriter, r *http.Request) {
 	rows, err := DB.Query("SELECT * FROM games")
 	if err != nil {
 		http.Error(w, http.StatusText(500), 500)
@@ -20,16 +20,16 @@ func GetGames(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	gme := make([]*entities.Game, 0)
+	games := make([]*entities.Game, 0)
 	for rows.Next() {
-		ge := new(entities.Game)
-		err := rows.Scan(&ge.ID, &ge.Title, &ge.Developer, &ge.Started, &ge.Finished)
+		game := new(entities.Game)
+		err := rows.Scan(&game.ID, &game.Title, &game.Developer, &game.Started, &game.Finished)
 		if err != nil {
 			http.Error(w, http.StatusText(500), 500)
 			return
 		}
 
-		gme = append(gme, ge)
+		games = append(games, game)
 	}
 
 	if err = rows.Err(); err != nil {
@@ -37,11 +37,11 @@ func GetGames(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, g := range gme {
-		fmt.Fprintf(w, "%d %s %s %t %t\n", g.ID, g.Title, g.Developer, g.Started, g.Finished)
+	for _, game := range games {
+		fmt.Fprintf(w, "%d %s %s %t %t\n", game.ID, game.Title, game.Developer, game.Started, game.Finished)
 	}
 }
-func GetSortedGames(w http.ResponseWriter, r *http.Request) {
+func GetSortedGamesHandler(w http.ResponseWriter, r *http.Request) {
 	rows, err := DB.Query("SELECT * FROM games ORDER BY title ASC")
 	if err != nil {
 		http.Error(w, http.StatusText(500), 500)
@@ -49,16 +49,16 @@ func GetSortedGames(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	gme := make([]*entities.Game, 0)
+	games := make([]*entities.Game, 0)
 	for rows.Next() {
-		ge := new(entities.Game)
-		err := rows.Scan(&ge.ID, &ge.Title, &ge.Developer, &ge.Started, &ge.Finished)
+		game := new(entities.Game)
+		err := rows.Scan(&game.ID, &game.Title, &game.Developer, &game.Started, &game.Finished)
 		if err != nil {
 			http.Error(w, http.StatusText(500), 500)
 			return
 		}
 
-		gme = append(gme, ge)
+		games = append(games, game)
 	}
 
 	if err = rows.Err(); err != nil {
@@ -66,12 +66,12 @@ func GetSortedGames(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, g := range gme {
-		fmt.Fprintf(w, "%d %s %s %t %t\n", g.ID, g.Title, g.Developer, g.Started, g.Finished)
+	for _, game := range games {
+		fmt.Fprintf(w, "%d %s %s %t %t\n", game.ID, game.Title, game.Developer, game.Started, game.Finished)
 	}
 }
 
-func GetUnPlayedGames(w http.ResponseWriter, r *http.Request) {
+func GetUnPlayedGamesHandler(w http.ResponseWriter, r *http.Request) {
 	rows, err := DB.Query("SELECT * FROM games WHERE started=false")
 	if err != nil {
 		http.Error(w, http.StatusText(500), 500)
@@ -79,16 +79,16 @@ func GetUnPlayedGames(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	gme := make([]*entities.Game, 0)
+	games := make([]*entities.Game, 0)
 	for rows.Next() {
-		ge := new(entities.Game)
-		err := rows.Scan(&ge.ID, &ge.Title, &ge.Developer, &ge.Started, &ge.Finished)
+		game := new(entities.Game)
+		err := rows.Scan(&game.ID, &game.Title, &game.Developer, &game.Started, &game.Finished)
 		if err != nil {
 			http.Error(w, http.StatusText(500), 500)
 			return
 		}
 
-		gme = append(gme, ge)
+		games = append(games, game)
 	}
 
 	if err = rows.Err(); err != nil {
@@ -96,12 +96,12 @@ func GetUnPlayedGames(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, g := range gme {
-		fmt.Fprintf(w, "%d %s %s %t %t\n", g.ID, g.Title, g.Developer, g.Started, g.Finished)
+	for _, game := range games {
+		fmt.Fprintf(w, "%d %s %s %t %t\n", game.ID, game.Title, game.Developer, game.Started, game.Finished)
 	}
 }
 
-func GetStartedUnfinishedGames(w http.ResponseWriter, r *http.Request) {
+func GetStartedUnfinishedGamesHandler(w http.ResponseWriter, r *http.Request) {
 	rows, err := DB.Query("SELECT * FROM games WHERE started=true AND finished=false")
 	if err != nil {
 		http.Error(w, http.StatusText(500), 500)
@@ -109,16 +109,16 @@ func GetStartedUnfinishedGames(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	gme := make([]*entities.Game, 0)
+	games := make([]*entities.Game, 0)
 	for rows.Next() {
-		ge := new(entities.Game)
-		err := rows.Scan(&ge.ID, &ge.Title, &ge.Developer, &ge.Started, &ge.Finished)
+		game := new(entities.Game)
+		err := rows.Scan(&game.ID, &game.Title, &game.Developer, &game.Started, &game.Finished)
 		if err != nil {
 			http.Error(w, http.StatusText(500), 500)
 			return
 		}
 
-		gme = append(gme, ge)
+		games = append(games, game)
 	}
 
 	if err = rows.Err(); err != nil {
@@ -126,12 +126,12 @@ func GetStartedUnfinishedGames(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, g := range gme {
-		fmt.Fprintf(w, "%d %s %s %t %t\n", g.ID, g.Title, g.Developer, g.Started, g.Finished)
+	for _, game := range games {
+		fmt.Fprintf(w, "%d %s %s %t %t\n", game.ID, game.Title, game.Developer, game.Started, game.Finished)
 	}
 }
 
-func GetFinishedGames(w http.ResponseWriter, r *http.Request) {
+func GetFinishedGamesHandler(w http.ResponseWriter, r *http.Request) {
 	rows, err := DB.Query("SELECT * FROM games WHERE finished=true")
 	if err != nil {
 		http.Error(w, http.StatusText(500), 500)
@@ -139,16 +139,16 @@ func GetFinishedGames(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	gme := make([]*entities.Game, 0)
+	games := make([]*entities.Game, 0)
 	for rows.Next() {
-		ge := new(entities.Game)
-		err := rows.Scan(&ge.ID, &ge.Title, &ge.Developer, &ge.Started, &ge.Finished)
+		game := new(entities.Game)
+		err := rows.Scan(&game.ID, &game.Title, &game.Developer, &game.Started, &game.Finished)
 		if err != nil {
 			http.Error(w, http.StatusText(500), 500)
 			return
 		}
 
-		gme = append(gme, ge)
+		games = append(games, game)
 	}
 
 	if err = rows.Err(); err != nil {
@@ -156,14 +156,19 @@ func GetFinishedGames(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, g := range gme {
-		fmt.Fprintf(w, "%d %s %s %t %t\n", g.ID, g.Title, g.Developer, g.Started, g.Finished)
+	for _, game := range games {
+		fmt.Fprintf(w, "%d %s %s %t %t\n", game.ID, game.Title, game.Developer, game.Started, game.Finished)
 	}
 }
 
-func GetSpecificGame(w http.ResponseWriter, r *http.Request) {
+func GetSpecificGameHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	title := vars["title"]
+
+	if !IterateData(title) {
+		http.Error(w, http.StatusText(404), 404)
+		return
+	}
 
 	rows, err := DB.Query("SELECT * FROM games WHERE title=$1", title)
 	if err != nil {
@@ -173,17 +178,11 @@ func GetSpecificGame(w http.ResponseWriter, r *http.Request) {
 	defer rows.Close()
 	var game *entities.Game
 	for rows.Next() {
-		game = new(entities.Game)
 		err := rows.Scan(&game.ID, &game.Title, &game.Developer, &game.Started, &game.Finished)
 		if err != nil {
 			http.Error(w, http.StatusText(500), 500)
 			return
 		}
-	}
-
-	if game.Title == "" {
-		http.Error(w, http.StatusText(404), 404)
-		return
 	}
 
 	if err = rows.Err(); err != nil {
@@ -194,21 +193,23 @@ func GetSpecificGame(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%d %s %s %t %t\n", game.ID, game.Title, game.Developer, game.Started, game.Finished)
 }
 
-func PostGame(w http.ResponseWriter, r *http.Request) {
+func AddGameHandler(w http.ResponseWriter, r *http.Request) {
 	var game entities.Game
 
 	err := json.NewDecoder(r.Body).Decode(&game)
 	if err != nil {
 		http.Error(w, http.StatusText(500), 500)
+		return
+	}
+
+	if IterateData(game.Title) {
+		http.Error(w, http.StatusText(400), 400)
+		fmt.Fprint(w, "Game already exists.")
+		return
 	}
 	result, err := DB.Exec("INSERT INTO games (title, developer, started, finished) VALUES ($1, $2, $3, $4)", game.Title, game.Developer, game.Started, game.Finished)
 	if err != nil {
 		http.Error(w, http.StatusText(500), 500)
-		return
-	}
-
-	if game.Title == "" {
-		http.Error(w, http.StatusText(400), 400)
 		return
 	}
 
@@ -221,7 +222,7 @@ func PostGame(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Game %s created successfully (%d row affected)\n", game.Title, rowsAffected)
 }
 
-func PutGame(w http.ResponseWriter, r *http.Request) {
+func UpdateGameHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	title := vars["title"]
 
@@ -230,15 +231,16 @@ func PutGame(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&game)
 	if err != nil {
 		http.Error(w, http.StatusText(500), 500)
+		return
+	}
+
+	if !IterateData(title) {
+		http.Error(w, http.StatusText(404), 404)
+		return
 	}
 	result, err := DB.Exec("UPDATE games SET title=$2, developer=$3, started=$4, finished=$5 WHERE title=$1", title, game.Title, game.Developer, game.Started, game.Finished)
 	if err != nil {
 		http.Error(w, http.StatusText(500), 500)
-		return
-	}
-
-	if game.Title == "" {
-		http.Error(w, http.StatusText(404), 404)
 		return
 	}
 
@@ -251,9 +253,14 @@ func PutGame(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Game %s was updated successfully (%d row affected)\n", title, rowsAffected)
 }
 
-func DeleteGame(w http.ResponseWriter, r *http.Request) {
+func DeleteGameHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	title := vars["title"]
+
+	if !IterateData(title) {
+		http.Error(w, http.StatusText(404), 404)
+		return
+	}
 
 	result, err := DB.Exec("DELETE FROM games WHERE title=$1", title)
 	if err != nil {
@@ -268,4 +275,31 @@ func DeleteGame(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprintf(w, "Game %s deleted successfully (%d row affected)\n", title, rowsAffected)
+}
+
+func IterateData(title string) bool {
+	results, err := DB.Query("SELECT * FROM games")
+	if err != nil {
+		return false
+	}
+	defer results.Close()
+
+	games := make([]*entities.Game, 0)
+	for results.Next() {
+		game := new(entities.Game)
+		err := results.Scan(&game.ID, &game.Title, &game.Developer, &game.Started, &game.Finished)
+		if err != nil {
+			return false
+		}
+
+		games = append(games, game)
+	}
+
+	for _, game := range games {
+		if game.Title == title {
+			return true
+		}
+	}
+
+	return false
 }
