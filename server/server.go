@@ -5,27 +5,32 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
 
 	"github.com/atennyson/DBTest/handler"
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
-)
-
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "postgres"
-	password = "W2xc7ig5GH!$32"
-	dbname   = "owned_switch_games"
 )
 
 func init() {
 
-	sqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
-	var err error
+	host := os.Getenv("HOST")
+	po := os.Getenv("PORT")
+	user := os.Getenv("USERNAME")
+	password := os.Getenv("PASSWORD")
+	dbname := os.Getenv("DBNAME")
+
+	port, _ := strconv.Atoi(po)
+
+	sqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+
 	handler.DB, err = sql.Open("postgres", sqlInfo)
 	if err != nil {
 		log.Fatal(err)
