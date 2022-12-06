@@ -10,17 +10,11 @@ import (
 
 	"github.com/atennyson/DBTest/handler"
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
 func init() {
-
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
+	var err error
 	host := os.Getenv("HOST")
 	po := os.Getenv("PORT")
 	user := os.Getenv("USERNAME")
