@@ -44,7 +44,7 @@ func GetGamesHandler(w http.ResponseWriter, r *http.Request) {
 func GetSortedGamesHandler(w http.ResponseWriter, r *http.Request) {
 	rows, err := DB.Query("SELECT * FROM games ORDER BY title ASC")
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		w.WriteHeader(400)
 		return
 	}
 	defer rows.Close()
@@ -54,7 +54,7 @@ func GetSortedGamesHandler(w http.ResponseWriter, r *http.Request) {
 		game := new(entities.Game)
 		err := rows.Scan(&game.ID, &game.Title, &game.Developer, &game.Started, &game.Finished)
 		if err != nil {
-			http.Error(w, http.StatusText(500), 500)
+			w.WriteHeader(500)
 			return
 		}
 
@@ -62,7 +62,7 @@ func GetSortedGamesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = rows.Err(); err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		w.WriteHeader(500)
 		return
 	}
 
@@ -74,7 +74,7 @@ func GetSortedGamesHandler(w http.ResponseWriter, r *http.Request) {
 func GetUnPlayedGamesHandler(w http.ResponseWriter, r *http.Request) {
 	rows, err := DB.Query("SELECT * FROM games WHERE started=false")
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		w.WriteHeader(400)
 		return
 	}
 	defer rows.Close()
@@ -84,7 +84,7 @@ func GetUnPlayedGamesHandler(w http.ResponseWriter, r *http.Request) {
 		game := new(entities.Game)
 		err := rows.Scan(&game.ID, &game.Title, &game.Developer, &game.Started, &game.Finished)
 		if err != nil {
-			http.Error(w, http.StatusText(500), 500)
+			w.WriteHeader(500)
 			return
 		}
 
@@ -92,7 +92,7 @@ func GetUnPlayedGamesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = rows.Err(); err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		w.WriteHeader(500)
 		return
 	}
 
@@ -104,7 +104,7 @@ func GetUnPlayedGamesHandler(w http.ResponseWriter, r *http.Request) {
 func GetStartedUnfinishedGamesHandler(w http.ResponseWriter, r *http.Request) {
 	rows, err := DB.Query("SELECT * FROM games WHERE started=true AND finished=false")
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		w.WriteHeader(400)
 		return
 	}
 	defer rows.Close()
@@ -114,7 +114,7 @@ func GetStartedUnfinishedGamesHandler(w http.ResponseWriter, r *http.Request) {
 		game := new(entities.Game)
 		err := rows.Scan(&game.ID, &game.Title, &game.Developer, &game.Started, &game.Finished)
 		if err != nil {
-			http.Error(w, http.StatusText(500), 500)
+			w.WriteHeader(500)
 			return
 		}
 
@@ -122,7 +122,7 @@ func GetStartedUnfinishedGamesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = rows.Err(); err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		w.WriteHeader(500)
 		return
 	}
 
@@ -134,17 +134,17 @@ func GetStartedUnfinishedGamesHandler(w http.ResponseWriter, r *http.Request) {
 func GetFinishedGamesHandler(w http.ResponseWriter, r *http.Request) {
 	rows, err := DB.Query("SELECT * FROM games WHERE finished=true")
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		w.WriteHeader(400)
 		return
 	}
 	defer rows.Close()
 
-	games := make([]*entities.Game, 0)
+	games := []entities.Game{}
 	for rows.Next() {
-		game := new(entities.Game)
+		game := entities.Game{}
 		err := rows.Scan(&game.ID, &game.Title, &game.Developer, &game.Started, &game.Finished)
 		if err != nil {
-			http.Error(w, http.StatusText(500), 500)
+			w.WriteHeader(500)
 			return
 		}
 
@@ -152,7 +152,7 @@ func GetFinishedGamesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = rows.Err(); err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		w.WriteHeader(500)
 		return
 	}
 
@@ -166,27 +166,27 @@ func GetSpecificGameHandler(w http.ResponseWriter, r *http.Request) {
 	title := vars["title"]
 
 	if !IterateData(title) {
-		http.Error(w, http.StatusText(404), 404)
+		w.WriteHeader(404)
 		return
 	}
 
 	rows, err := DB.Query("SELECT * FROM games WHERE title=$1", title)
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		w.WriteHeader(500)
 		return
 	}
 	defer rows.Close()
-	var game *entities.Game
+	game := entities.Game{}
 	for rows.Next() {
 		err := rows.Scan(&game.ID, &game.Title, &game.Developer, &game.Started, &game.Finished)
 		if err != nil {
-			http.Error(w, http.StatusText(500), 500)
+			w.WriteHeader(500)
 			return
 		}
 	}
 
 	if err = rows.Err(); err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		w.WriteHeader(500)
 		return
 	}
 
@@ -194,28 +194,28 @@ func GetSpecificGameHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddGameHandler(w http.ResponseWriter, r *http.Request) {
-	var game entities.Game
+	game := entities.Game{}
 
 	err := json.NewDecoder(r.Body).Decode(&game)
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		w.WriteHeader(400)
 		return
 	}
 
 	if IterateData(game.Title) {
-		http.Error(w, http.StatusText(400), 400)
+		w.WriteHeader(400)
 		fmt.Fprint(w, "Game already exists.")
 		return
 	}
 	result, err := DB.Exec("INSERT INTO games (title, developer, started, finished) VALUES ($1, $2, $3, $4)", game.Title, game.Developer, game.Started, game.Finished)
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		w.WriteHeader(500)
 		return
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		w.WriteHeader(500)
 		return
 	}
 
@@ -226,27 +226,27 @@ func UpdateGameHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	title := vars["title"]
 
-	var game entities.Game
+	game := entities.Game{}
 
 	err := json.NewDecoder(r.Body).Decode(&game)
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		w.WriteHeader(400)
 		return
 	}
 
 	if !IterateData(title) {
-		http.Error(w, http.StatusText(404), 404)
+		w.WriteHeader(404)
 		return
 	}
 	result, err := DB.Exec("UPDATE games SET title=$2, developer=$3, started=$4, finished=$5 WHERE title=$1", title, game.Title, game.Developer, game.Started, game.Finished)
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		w.WriteHeader(500)
 		return
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		w.WriteHeader(500)
 		return
 	}
 
@@ -258,19 +258,19 @@ func DeleteGameHandler(w http.ResponseWriter, r *http.Request) {
 	title := vars["title"]
 
 	if !IterateData(title) {
-		http.Error(w, http.StatusText(404), 404)
+		w.WriteHeader(404)
 		return
 	}
 
 	result, err := DB.Exec("DELETE FROM games WHERE title=$1", title)
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		w.WriteHeader(500)
 		return
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		w.WriteHeader(500)
 		return
 	}
 
@@ -284,9 +284,9 @@ func IterateData(title string) bool {
 	}
 	defer results.Close()
 
-	games := make([]*entities.Game, 0)
+	games := []entities.Game{}
 	for results.Next() {
-		game := new(entities.Game)
+		game := entities.Game{}
 		err := results.Scan(&game.ID, &game.Title, &game.Developer, &game.Started, &game.Finished)
 		if err != nil {
 			return false
