@@ -48,9 +48,6 @@ func main() {
 	r.HandleFunc("/games/{title}", handler.UpdateGameHandler).Methods("PUT")
 	r.HandleFunc("/games/{title}", handler.DeleteGameHandler).Methods("DELETE")
 
-	fmt.Println("Listening on port 8080")
-	http.ListenAndServe(":8080", r)
-
 	srv := &http.Server{
 		Addr:         "0.0.0.0:8080",
 		WriteTimeout: time.Second * 15,
