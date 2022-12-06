@@ -20,7 +20,7 @@ func GetGamesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	games := []entities.Game{}]
+	games := []entities.Game{}
 	for rows.Next() {
 		game := entities.Game{}
 		err := rows.Scan(&game.ID, &game.Title, &game.Developer, &game.Started, &game.Finished)
