@@ -15,7 +15,7 @@ var DB *sql.DB
 func GetGamesHandler(w http.ResponseWriter, r *http.Request) {
 	rows, err := DB.Query("SELECT * FROM games")
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		w.WriteHeader(400)
 		return
 	}
 	defer rows.Close()
@@ -25,7 +25,7 @@ func GetGamesHandler(w http.ResponseWriter, r *http.Request) {
 		game := new(entities.Game)
 		err := rows.Scan(&game.ID, &game.Title, &game.Developer, &game.Started, &game.Finished)
 		if err != nil {
-			http.Error(w, http.StatusText(500), 500)
+			w.WriteHeader(500)
 			return
 		}
 
@@ -33,12 +33,12 @@ func GetGamesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = rows.Err(); err != nil {
-		http.Error(w, http.StatusText(500), 500)
+		w.WriteHeader(500)
 		return
 	}
 
-	for _, game := range games {
-		fmt.Fprintf(w, "%d %s %s %t %t\n", game.ID, game.Title, game.Developer, game.Started, game.Finished)
+	if err = json.NewEncoder(w).Encode(games); err != nil {
+		w.WriteHeader(500)
 	}
 }
 func GetSortedGamesHandler(w http.ResponseWriter, r *http.Request) {
