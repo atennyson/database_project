@@ -37,8 +37,10 @@ func GetGamesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = json.NewEncoder(w).Encode(games); err != nil {
-		w.WriteHeader(500)
+	for _, game := range games {
+		if err = json.NewEncoder(w).Encode(game); err != nil {
+			w.WriteHeader(500)
+		}
 	}
 }
 func GetSortedGamesHandler(w http.ResponseWriter, r *http.Request) {
