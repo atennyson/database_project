@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"time"
 
 	"github.com/atennyson/DBTest/handler"
 	"github.com/gorilla/mux"
@@ -48,17 +47,6 @@ func main() {
 	r.HandleFunc("/games/{title}", handler.UpdateGameHandler).Methods("PUT")
 	r.HandleFunc("/games/{title}", handler.DeleteGameHandler).Methods("DELETE")
 
-	srv := &http.Server{
-		Addr:         "0.0.0.0:8080",
-		WriteTimeout: time.Second * 15,
-		ReadTimeout:  time.Second * 15,
-		IdleTimeout:  time.Second * 60,
-		Handler:      r,
-	}
-
-	go func() {
-		if err := srv.ListenAndServe(); err != nil {
-			log.Println(err)
-		}
-	}()
+	fmt.Println("Listening on port 8080")
+	http.ListenAndServe(":8080", r)
 }
