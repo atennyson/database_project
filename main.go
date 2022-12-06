@@ -16,7 +16,7 @@ import (
 func init() {
 	var err error
 	host := os.Getenv("HOST")
-	po := os.Getenv("PORT")
+	po := os.Getenv("DBPORT")
 	user := os.Getenv("USERNAME")
 	password := os.Getenv("PASSWORD")
 	dbname := os.Getenv("DBNAME")
@@ -47,6 +47,6 @@ func main() {
 	r.HandleFunc("/games/{title}", handler.UpdateGameHandler).Methods("PUT")
 	r.HandleFunc("/games/{title}", handler.DeleteGameHandler).Methods("DELETE")
 
-	fmt.Println("Listening on port 6089")
-	http.ListenAndServe(":6089", r)
+	fmt.Println("Listening on port 8080")
+	http.ListenAndServe(":8080", r)
 }
