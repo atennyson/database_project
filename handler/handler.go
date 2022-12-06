@@ -20,9 +20,9 @@ func GetGamesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	games := make([]*entities.Game, 0)
+	games := []entities.Game{}]
 	for rows.Next() {
-		game := new(entities.Game)
+		game := entities.Game{}
 		err := rows.Scan(&game.ID, &game.Title, &game.Developer, &game.Started, &game.Finished)
 		if err != nil {
 			w.WriteHeader(500)
@@ -49,9 +49,9 @@ func GetSortedGamesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	games := make([]*entities.Game, 0)
+	games := []entities.Game{}
 	for rows.Next() {
-		game := new(entities.Game)
+		game := entities.Game{}
 		err := rows.Scan(&game.ID, &game.Title, &game.Developer, &game.Started, &game.Finished)
 		if err != nil {
 			w.WriteHeader(500)
@@ -67,7 +67,7 @@ func GetSortedGamesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, game := range games {
-		fmt.Fprintf(w, "%d %s %s %t %t\n", game.ID, game.Title, game.Developer, game.Started, game.Finished)
+		fmt.Fprintf(w, "ID: %d Title: %s Developer: %s Started?: %t Finished?: %t\n", game.ID, game.Title, game.Developer, game.Started, game.Finished)
 	}
 }
 
@@ -79,9 +79,9 @@ func GetUnPlayedGamesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	games := make([]*entities.Game, 0)
+	games := []entities.Game{}
 	for rows.Next() {
-		game := new(entities.Game)
+		game := entities.Game{}
 		err := rows.Scan(&game.ID, &game.Title, &game.Developer, &game.Started, &game.Finished)
 		if err != nil {
 			w.WriteHeader(500)
@@ -97,7 +97,7 @@ func GetUnPlayedGamesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, game := range games {
-		fmt.Fprintf(w, "%d %s %s %t %t\n", game.ID, game.Title, game.Developer, game.Started, game.Finished)
+		fmt.Fprintf(w, "ID: %d Title: %s Developer: %s Started?: %t Finished?: %t\n", game.ID, game.Title, game.Developer, game.Started, game.Finished)
 	}
 }
 
@@ -109,9 +109,9 @@ func GetStartedUnfinishedGamesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	games := make([]*entities.Game, 0)
+	games := []entities.Game{}
 	for rows.Next() {
-		game := new(entities.Game)
+		game := entities.Game{}
 		err := rows.Scan(&game.ID, &game.Title, &game.Developer, &game.Started, &game.Finished)
 		if err != nil {
 			w.WriteHeader(500)
@@ -127,7 +127,7 @@ func GetStartedUnfinishedGamesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, game := range games {
-		fmt.Fprintf(w, "%d %s %s %t %t\n", game.ID, game.Title, game.Developer, game.Started, game.Finished)
+		fmt.Fprintf(w, "ID: %d Title: %s Developer: %s Started?: %t Finished?: %t\n", game.ID, game.Title, game.Developer, game.Started, game.Finished)
 	}
 }
 
@@ -157,7 +157,7 @@ func GetFinishedGamesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, game := range games {
-		fmt.Fprintf(w, "%d %s %s %t %t\n", game.ID, game.Title, game.Developer, game.Started, game.Finished)
+		fmt.Fprintf(w, "ID: %d Title: %s Developer: %s Started?: %t Finished?: %t\n", game.ID, game.Title, game.Developer, game.Started, game.Finished)
 	}
 }
 
@@ -190,7 +190,7 @@ func GetSpecificGameHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "%d %s %s %t %t\n", game.ID, game.Title, game.Developer, game.Started, game.Finished)
+	fmt.Fprintf(w, "ID: %d Title: %s Developer: %s Started?: %t Finished?: %t\n", game.ID, game.Title, game.Developer, game.Started, game.Finished)
 }
 
 func AddGameHandler(w http.ResponseWriter, r *http.Request) {
